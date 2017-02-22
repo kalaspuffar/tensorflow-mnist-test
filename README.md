@@ -13,7 +13,9 @@ git clone https://github.com/tensorflow/tensorflow.git
 
 Start msys32
 ```
+pip install numpy
 export PYTHON_BIN_PATH=[python_exe_path]
+export BAZEL_SH=/usr/bin/bash.exe
 ./configure
 bazel build --config opt //tensorflow/java:tensorflow //tensorflow/java:libtensorflow_jni
 ```
