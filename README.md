@@ -1,12 +1,25 @@
-# Tensorflow MNIST demo
-Me testing our tensorflow and mnist in java
+# Tensorflow java MNIST demo
+
+This project aims to give a tutorial training a MNIST model in python, reading it in java, verifying that you can use it in both languages with the same result.
+
+## Prerequisites
+
+To run this example you need the following.
+
+* [Python](https://www.python.org/downloads)
+* [Maven](https://maven.apache.org/install.html)
+* Tensorflow >=1.0.1
+* tensorflow_jni >=1.0.1
+* libtensorflow.jar >=1.0.1
+
+## Building tensorflow
+
+As of me writing this the current version of tensorflow is 1.0.0-PREVIEW1, this version is missing the feature SavedModelBundle which makes the setup much easier. By running only one save you get a dir with a full model. So you could modify this demo to use the preview but building tensorflow in Linux or Mac are not that hard.
 
 
-[Building bazel](https://bazel.build/versions/master/docs/install.html)
+### Building tensorflow
 
-[Building tenserflow](https://www.tensorflow.org/install/install_sources)
-
-[Building tenserflow jar](https://github.com/tensorflow/tensorflow/tree/master/tensorflow/java)
+Tensorflow uses the build system bazel, a install description could be found at [Building bazel](https://bazel.build/versions/master/docs/install.html) or following the steps below.
 
 ```
 sudo add-apt-repository ppa:webupd8team/java
@@ -19,17 +32,27 @@ sudo apt-get update && sudo apt-get install bazel
 sudo apt-get upgrade bazel
 ```
 
+### Building tensorflow pip package
+
+[Building tenserflow](https://www.tensorflow.org/install/install_sources)
+
 ```
 sudo pip install six numpy wheel
 bazel build --config=opt //tensorflow/tools/pip_package:build_pip_package
 sudo pip install /tmp/tensorflow_pkg/tensorflow-1.0.1-py2-none-any.whl
 ```
 
+### Building tensorflow java bindings (jni and jar)
+
+[Building tenserflow jar](https://github.com/tensorflow/tensorflow/tree/master/tensorflow/java)
+
 ```
 sudo apt-get install python swig python-numpy
 ./configure
 bazel build --config opt //tensorflow/java:tensorflow //tensorflow/java:libtensorflow_jni
 ```
+
+### Install built jar in maven repo
 
 ```
 mvn org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file
@@ -41,7 +64,7 @@ mvn org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file
   -DgeneratePom=true
 ```
 
-### Building tensorflow on Windows
+## Building tensorflow on Windows
 
 We need to build Bazel because it has a bug in windows that requires the latest build.
 
