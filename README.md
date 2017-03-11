@@ -1,6 +1,48 @@
 # Tensorflow MNIST demo
 Me testing our tensorflow and mnist in java
 
+
+[Building bazel](https://bazel.build/versions/master/docs/install.html)
+
+[Building tenserflow](https://www.tensorflow.org/install/install_sources)
+
+[Building tenserflow jar](https://github.com/tensorflow/tensorflow/tree/master/tensorflow/java)
+
+```
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get update
+sudo apt-get install oracle-java8-installer
+sudo apt-get install pkg-config zip g++ zlib1g-dev unzip
+echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
+curl https://bazel.build/bazel-release.pub.gpg | sudo apt-key add -
+sudo apt-get update && sudo apt-get install bazel
+sudo apt-get upgrade bazel
+```
+
+```
+sudo pip install six numpy wheel
+bazel build --config=opt //tensorflow/tools/pip_package:build_pip_package
+sudo pip install /tmp/tensorflow_pkg/tensorflow-1.0.1-py2-none-any.whl
+```
+
+```
+sudo apt-get install python swig python-numpy
+./configure
+bazel build --config opt //tensorflow/java:tensorflow //tensorflow/java:libtensorflow_jni
+```
+
+```
+mvn org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file
+  -Dfile=libtensorflow-1.0.1.jar
+  -DgroupId=org.tensorflow
+  -DartifactId=libtensorflow
+  -Dversion=1.0.1
+  -Dpackaging=jar
+  -DgeneratePom=true
+```
+
+### Building tensorflow on Windows
+
 We need to build Bazel because it has a bug in windows that requires the latest build.
 
 ```
@@ -56,22 +98,3 @@ bazel build --config opt //tensorflow/java:tensorflow //tensorflow/java:libtenso
 
 Windows 7 need Powershell 3.0
 http://www.microsoft.com/en-us/download/details.aspx?id=34595
-
-```
-mvn archetype:generate
-  -DgroupId=org.ea.tensorflow
-  -DartifactId=tensorflow-mnist
-  -Dversion=0.0.1
-  -DinteractiveMode=false
-```
-
-
-```
-mvn org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file
-  -Dfile=libtensorflow-1.0.0-PREVIEW1.jar
-  -DgroupId=org.tensorflow
-  -DartifactId=libtensorflow
-  -Dversion=1.0.0-PREVIEW1
-  -Dpackaging=jar
-  -DgeneratePom=true
-```
