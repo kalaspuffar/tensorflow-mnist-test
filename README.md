@@ -89,7 +89,7 @@ Training can be done with ```python mnist_train.py``` in the project directory.
 
 Verifying with java we can build the project with ```mvn package``` and run it with ```./run.sh``` in the project directory. This script will run the project jar with the jni binding library.
 
-## Building tensorflow on Windows
+## (EXPERIMENTAL) Building tensorflow on Windows
 
 We need to build Bazel because it has a bug in windows that requires the latest build.
 
