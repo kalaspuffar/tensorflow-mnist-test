@@ -2,6 +2,9 @@
 .idea
 *.class
 
+mnist
+jni
+target
 model
 MNIST_data
 

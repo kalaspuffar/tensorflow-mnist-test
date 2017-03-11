@@ -5,31 +5,11 @@ mnist = input_data.read_data_sets('MNIST_data', one_hot=True)
 import tensorflow as tf
 sess = tf.InteractiveSession()
 
-x = tf.placeholder(tf.float32, shape=[None, 784])
+x = tf.placeholder(tf.float32, shape=[None, 784], name="input_tensor")
 y_ = tf.placeholder(tf.float32, shape=[None, 10])
 
 W = tf.Variable(tf.zeros([784,10]))
 b = tf.Variable(tf.zeros([10]))
-
-sess.run(tf.global_variables_initializer())
-
-y = tf.matmul(x,W) + b
-
-cross_entropy = tf.reduce_mean(
-    tf.nn.softmax_cross_entropy_with_logits(labels=y_, logits=y))
-
-train_step = tf.train.GradientDescentOptimizer(0.5).minimize(cross_entropy)
-
-for _ in range(1000):
-  batch = mnist.train.next_batch(100)
-  train_step.run(feed_dict={x: batch[0], y_: batch[1]})
-
-correct_prediction = tf.equal(tf.argmax(y,1), tf.argmax(y_,1))
-
-accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-
-print(accuracy.eval(feed_dict={x: mnist.test.images, y_: mnist.test.labels}))
-
 
 def weight_variable(shape):
   initial = tf.truncated_normal(shape, stddev=0.1)
@@ -66,24 +46,25 @@ b_fc1 = bias_variable([1024])
 h_pool2_flat = tf.reshape(h_pool2, [-1, 7*7*64])
 h_fc1 = tf.nn.relu(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)
 
-keep_prob = tf.placeholder(tf.float32)
+keep_prob = tf.placeholder(tf.float32, name="keep_prob")
 h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
 
 W_fc2 = weight_variable([1024, 10])
 b_fc2 = bias_variable([10])
 
 y_conv = tf.matmul(h_fc1_drop, W_fc2) + b_fc2
+y_conv = tf.identity(y_conv, name="output_tensor")
 
 cross_entropy = tf.reduce_mean(
     tf.nn.softmax_cross_entropy_with_logits(labels=y_, logits=y_conv))
 train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
 correct_prediction = tf.equal(tf.argmax(y_conv,1), tf.argmax(y_,1))
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-sess.run(tf.global_variables_initializer())
 
+builder = tf.saved_model.builder.SavedModelBuilder("./model")
+sess.run(tf.global_variables_initializer())
 #saver = tf.train.Saver()
-#for i in range(20000):
-for i in range(100):
+for i in range(20000):
   batch = mnist.train.next_batch(50)
   if i%100 == 0:
     train_accuracy = accuracy.eval(feed_dict={
@@ -91,38 +72,11 @@ for i in range(100):
     print("step %d, training accuracy %g"%(i, train_accuracy))
   train_step.run(feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
 
+builder.add_meta_graph_and_variables(sess, [tf.saved_model.tag_constants.SERVING])
+builder.save(True)
+
 #save_path = saver.save(sess, "C:/temp/model.ckpt")
 #print("Model saved in file: %s" % save_path)
 
 print("test accuracy %g"%accuracy.eval(feed_dict={
     x: mnist.test.images, y_: mnist.test.labels, keep_prob: 1.0}))
-
-builder = tf.saved_model.builder.SavedModelBuilder("./model")
-predict_input_tensor = tf.saved_model.utils.build_tensor_info(x)
-predict_signature_inputs = {"inputTensor": predict_input_tensor}
-
-predict_output_tensor = tf.saved_model.utils.build_tensor_info(y_conv)
-predict_signature_outputs = {"outputTensor": predict_output_tensor}
-predict_signature_def = (
-    tf.saved_model.signature_def_utils.build_signature_def(
-        predict_signature_inputs, predict_signature_outputs,
-        tf.saved_model.signature_constants.PREDICT_METHOD_NAME))
-
-input_tensor_info = tf.saved_model.utils.build_tensor_info(x)
-signature_inputs = {
-  tf.saved_model.signature_constants.CLASSIFY_INPUTS: input_tensor_info
-}
-output_tensor_info = tf.saved_model.utils.build_tensor_info(y_conv)
-signature_outputs = {
-  tf.saved_model.signature_constants.CLASSIFY_OUTPUT_SCORES:
-      output_tensor_info
-}
-
-builder.add_meta_graph_and_variables(
-        sess, [tf.saved_model.tag_constants.SERVING],
-        signature_def_map={
-            "classify_x_to_y": tf.saved_model.signature_def_utils.build_signature_def(
-              signature_inputs, signature_outputs, tf.saved_model.signature_constants.CLASSIFY_METHOD_NAME),
-            tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY: predict_signature_def
-        })
-builder.save(True)
