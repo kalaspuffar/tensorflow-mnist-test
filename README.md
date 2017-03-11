@@ -19,7 +19,7 @@ As of me writing this the current version of tensorflow is 1.0.0-PREVIEW1, this 
 
 ### Building tensorflow
 
-Tensorflow uses the build system bazel, a install description could be found at [Building bazel](https://bazel.build/versions/master/docs/install.html) or following the steps below.
+Tensorflow uses the build system bazel, a install description could be found at [Building bazel](https://bazel.build/versions/master/docs/install.html) or following the steps below. (Tested on ubuntu trusty)
 
 ```
 sudo add-apt-repository ppa:webupd8team/java
@@ -34,8 +34,15 @@ sudo apt-get upgrade bazel
 
 ### Building tensorflow pip package
 
-[Building tenserflow](https://www.tensorflow.org/install/install_sources)
+The easiest way to install tensorflow is with a pip package. To build your own package and install follow instructions at [Building tenserflow](https://www.tensorflow.org/install/install_sources) or the description below.
 
+#### Fetch tensorflow source
+```
+git clone https://github.com/tensorflow/tensorflow.git
+cd tensorflow
+```
+
+#### Build tensorflow
 ```
 sudo pip install six numpy wheel
 bazel build --config=opt //tensorflow/tools/pip_package:build_pip_package
@@ -44,15 +51,28 @@ sudo pip install /tmp/tensorflow_pkg/tensorflow-1.0.1-py2-none-any.whl
 
 ### Building tensorflow java bindings (jni and jar)
 
-[Building tenserflow jar](https://github.com/tensorflow/tensorflow/tree/master/tensorflow/java)
+Last but not least we need the java bindings, these can be built by following the description at [Building tenserflow jar](https://github.com/tensorflow/tensorflow/tree/master/tensorflow/java) or the operations below.
 
+#### Fetch tensorflow source
+```
+git clone https://github.com/tensorflow/tensorflow.git
+cd tensorflow
+```
+
+#### Build bindings
 ```
 sudo apt-get install python swig python-numpy
 ./configure
 bazel build --config opt //tensorflow/java:tensorflow //tensorflow/java:libtensorflow_jni
 ```
+The JAR (libtensorflow.jar) and native library (libtensorflow_jni.so) will be in bazel-bin/tensorflow/java.
 
-### Install built jar in maven repo
+Copy the .so file to the jni directory in this project so ```./run.sh``` can find it. And install the jar in maven your repository by following the description below.
+
+
+#### Install built jar in maven repo
+
+After we built the bindings we can install them in our local maven repository with
 
 ```
 mvn org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file
@@ -63,6 +83,11 @@ mvn org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file
   -Dpackaging=jar
   -DgeneratePom=true
 ```
+
+### Running this repo
+Training can be done with ```python mnist_train.py``` in the project directory.
+
+Verifying with java we can build the project with ```mvn package``` and run it with ```./run.sh``` in the project directory. This script will run the project jar with the jni binding library.
 
 ## Building tensorflow on Windows
 
