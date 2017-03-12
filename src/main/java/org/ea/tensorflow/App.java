@@ -27,7 +27,7 @@ public class App
           FloatBuffer fb = FloatBuffer.allocate(784);
           byte[] imgData = mrTest.readNextImage();
           for(byte b : imgData) {
-              fb.put((float)(b & 0xFF)/255.0f); // normalize image pixels to [-0.5, 0.5]
+              fb.put((float)(b & 0xFF)/255.0f);
           }
           fb.rewind();
 
@@ -44,8 +44,8 @@ public class App
             .run().get(0);
 
           float[][] m = new float[1][10];
-          m[0] = new float[10];
-          Arrays.fill(m[0], 0);
+          //m[0] = new float[10];
+          //Arrays.fill(m[0], 0);
 
           float[][] matrix = result.copyTo(m);
           float maxVal = 0;

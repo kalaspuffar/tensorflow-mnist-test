@@ -8,9 +8,6 @@ sess = tf.InteractiveSession()
 x = tf.placeholder(tf.float32, shape=[None, 784], name="input_tensor")
 y_ = tf.placeholder(tf.float32, shape=[None, 10])
 
-W = tf.Variable(tf.zeros([784,10]))
-b = tf.Variable(tf.zeros([10]))
-
 def weight_variable(shape):
   initial = tf.truncated_normal(shape, stddev=0.1)
   return tf.Variable(initial)
@@ -63,7 +60,7 @@ accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
 builder = tf.saved_model.builder.SavedModelBuilder("./model")
 sess.run(tf.global_variables_initializer())
-#saver = tf.train.Saver()
+
 for i in range(20000):
   batch = mnist.train.next_batch(50)
   if i%100 == 0:
@@ -74,9 +71,6 @@ for i in range(20000):
 
 builder.add_meta_graph_and_variables(sess, [tf.saved_model.tag_constants.SERVING])
 builder.save(True)
-
-#save_path = saver.save(sess, "C:/temp/model.ckpt")
-#print("Model saved in file: %s" % save_path)
 
 print("test accuracy %g"%accuracy.eval(feed_dict={
     x: mnist.test.images, y_: mnist.test.labels, keep_prob: 1.0}))
