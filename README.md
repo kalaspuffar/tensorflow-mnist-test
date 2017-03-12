@@ -54,6 +54,7 @@ sudo pip install /tmp/tensorflow_pkg/tensorflow-1.0.1-py2-none-any.whl
 Last but not least we need the java bindings, these can be built by following the description at [Building tenserflow jar](https://github.com/tensorflow/tensorflow/tree/master/tensorflow/java) or the operations below.
 
 #### Fetch tensorflow source
+If you haven't done so already you need to fetch the source from github in order to build java bindings. Follow instructions below.
 ```
 git clone https://github.com/tensorflow/tensorflow.git
 cd tensorflow
