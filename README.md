@@ -132,6 +132,7 @@ compile.sh
 
 ```
 git clone https://github.com/tensorflow/tensorflow.git
+git checkout r1.1
 ```
 
 Start msys32
