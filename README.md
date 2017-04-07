@@ -77,10 +77,10 @@ After we built the bindings we can install them in our local maven repository wi
 
 ```
 mvn org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file
-  -Dfile=libtensorflow-1.0.1.jar
+  -Dfile=libtensorflow.jar
   -DgroupId=org.tensorflow
   -DartifactId=libtensorflow
-  -Dversion=1.0.1
+  -Dversion=1.1.0-MINE
   -Dpackaging=jar
   -DgeneratePom=true
 ```
@@ -135,16 +135,54 @@ git clone https://github.com/tensorflow/tensorflow.git
 git checkout r1.1
 ```
 
-Start msys32
 ```
 pip install numpy
 export PYTHON_BIN_PATH=[python_exe_path]
-export BAZEL_SH=/usr/bin/bash.exe
+export BAZEL_WRKDIR=c:/tempdir/shrtpath
+export BAZEL_SH=c:/tools/msys64/usr/bin/bash.exe
 export BAZEL_VS=[Visual Studio Path]
 export BAZEL_PYTHON=[python.exe Path]
-./configure
+```
+
+[Install uinst](http://www.nvidia.com/object/gpu-accelerated-applications-tensorflow-installation.html)
+```
+$ ./configure
+Please specify the location of python. [Default is /usr/bin/python]: [enter]
+Do you wish to build TensorFlow with Google Cloud Platform support? [y/N] n
+No Google Cloud Platform support will be enabled for TensorFlow
+Do you wish to build TensorFlow with GPU support? [y/N] y
+GPU support will be enabled for TensorFlow
+Please specify which gcc nvcc should use as the host compiler. [Default is /usr/bin/gcc]: [enter]
+Please specify the Cuda SDK version you want to use, e.g. 7.0. [Leave empty to use system default]: 8.0
+Please specify the location where CUDA 8.0 toolkit is installed. Refer to README.md for more details. [Default is /usr/local/cuda]: [enter]
+Please specify the Cudnn version you want to use. [Leave empty to use system default]: 5
+Please specify the location where cuDNN 5 library is installed. Refer to README.md for more details. [Default is /usr/local/cuda]: [enter]
+[Default is: "3.5,5.2"]: 5.2,6.1
+Setting up Cuda include
+Setting up Cuda lib64
+Setting up Cuda bin
+Setting up Cuda nvvm
+Setting up CUPTI include
+Setting up CUPTI lib64
+```
+
+```
+export BUILD_OPTS='--cpu=x64_windows_msvc --host_cpu=x64_windows_msvc --copt=/w --verbose_failures --experimental_ui'
+bazel build -c opt $BUILD_OPTS tensorflow/tools/pip_package:build_pip_package
+```
+
+Copy all files from
+c:\tempdir\shrtpath\temp\_bazel_woden\incXe-uU\execroot\tensorflow\ to bazel-bin\tensorflow\tools\pip_package\build_pip_package.runfiles\
+```
+bazel-bin/tensorflow/tools/pip_package/build_pip_package c:/tmp/tensorflow_pkg
+pip install c:\tmp\tensorflow_pkg\tensorflow-1.1.0rc1-cp35-cp35m-win_amd64.whl
+```
+
+```
 bazel build --config opt //tensorflow/java:tensorflow //tensorflow/java:libtensorflow_jni
 ```
+
+copy libtensorflow_jni.so to tensorflow_jni.dll in your jni directory.
 
 Windows 7 need Powershell 3.0
 http://www.microsoft.com/en-us/download/details.aspx?id=34595

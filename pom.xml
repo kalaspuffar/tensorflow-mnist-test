@@ -39,7 +39,7 @@
     <dependency>
       <groupId>org.tensorflow</groupId>
       <artifactId>libtensorflow</artifactId>
-      <version>1.0.0-MINE</version>
+      <version>1.1.0-MINE</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

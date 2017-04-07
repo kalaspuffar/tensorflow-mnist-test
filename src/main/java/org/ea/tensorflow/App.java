@@ -18,7 +18,7 @@ public class App
       try {
         MnistReader mrTest = new MnistReader("mnist/t10k-labels-idx1-ubyte", "mnist/t10k-images-idx3-ubyte");
 
-        SavedModelBundle smb = SavedModelBundle.load("/home/george/tensorflow-mnist-test/model", "serve");
+        SavedModelBundle smb = SavedModelBundle.load("./model", "serve");
         Session s = smb.session();
 
         int correct_prediction = 0;
