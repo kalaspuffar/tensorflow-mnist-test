@@ -15,7 +15,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>org.ea.tensorflow.App</mainClass>
+              <mainClass>org.ea.tensorflow.Keras</mainClass>
             </manifest>
           </archive>
           <descriptorRefs>
@@ -36,11 +36,19 @@
     </plugins>
   </build>
   <dependencies>
+    <!-- https://mvnrepository.com/artifact/org.tensorflow/libtensorflow_jni -->
     <dependency>
-      <groupId>org.tensorflow</groupId>
-      <artifactId>libtensorflow</artifactId>
-      <version>1.1.0-MINE</version>
+        <groupId>org.tensorflow</groupId>
+        <artifactId>libtensorflow_jni</artifactId>
+        <version>1.1.0-rc2</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/org.tensorflow/tensorflow -->
+    <dependency>
+        <groupId>org.tensorflow</groupId>
+        <artifactId>tensorflow</artifactId>
+        <version>1.1.0-rc2</version>
+    </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
