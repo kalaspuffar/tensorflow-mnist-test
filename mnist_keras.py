@@ -1,5 +1,6 @@
 import tensorflow as tf
 from keras.initializers import Constant
+from keras.initializers import TruncatedNormal
 from keras.layers import Reshape
 from keras.layers import Flatten
 from keras.layers import Dense
@@ -21,15 +22,19 @@ labels = tf.placeholder(tf.float32, shape=(None, 10))
 # Keras layers can be called on TensorFlow tensors:
 x = Reshape((-1, 28, 28))(img)
 x = Conv2D(32, kernel_size=(5, 5), strides=(1, 1), padding='same',
-    activation='relu', use_bias=True, bias_initializer='zeros', name="conv2d_1")(x)
+    activation='relu', kernel_initializer=TruncatedNormal(stddev=0.1),
+    use_bias=True, bias_initializer=Constant(0.1), name="conv2d_1")(x)
 x = MaxPooling2D(pool_size=(2, 2), strides=None, padding='same', name="max_pool_1")(x)
 x = Conv2D(64, kernel_size=(5, 5), strides=(1, 1), padding='same',
-    activation='relu', use_bias=True, bias_initializer='zeros', name="conv2d_2")(x)
+    activation='relu', kernel_initializer=TruncatedNormal(stddev=0.1),
+    use_bias=True, bias_initializer=Constant(0.1), name="conv2d_2")(x)
 x = MaxPooling2D(pool_size=(2, 2), strides=None, padding='same', name="max_pool_2")(x)
 x = Flatten(name='flatten')(x)
-x = Dense(1024, activation='relu', use_bias=True, bias_initializer='zeros', name='fc1')(x)
+x = Dense(1024, activation='relu', kernel_initializer=TruncatedNormal(stddev=0.1),
+    use_bias=True, bias_initializer=Constant(0.1), name='fc1')(x)
 x = Dropout(0.5, name='dropout')(x)
-preds = Dense(10, use_bias=True, bias_initializer='zeros', name='fc2')(x)  # output layer with 10 units and a softmax activation
+preds = Dense(10, kernel_initializer=TruncatedNormal(stddev=0.1),
+    use_bias=True, bias_initializer=Constant(0.1), name='fc2')(x)  # output layer with 10 units and a softmax activation
 preds = tf.identity(preds, name="output_tensor")
 
 # Training function
@@ -65,6 +70,9 @@ with sess.as_default():
 # Save model so we can use it in java.
 builder.add_meta_graph_and_variables(sess, [tf.saved_model.tag_constants.SERVING])
 builder.save(True)
+
+writer = tf.summary.FileWriter('./keras_board/1')
+writer.add_graph(sess.graph)
 
 # Print final accuracy.
 with sess.as_default():

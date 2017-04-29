@@ -69,6 +69,9 @@ for i in range(20000):
     print("step %d, training accuracy %g"%(i, train_accuracy))
   train_step.run(feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
 
+writer = tf.summary.FileWriter('./tensor_board/1')
+writer.add_graph(sess.graph)
+
 builder.add_meta_graph_and_variables(sess, [tf.saved_model.tag_constants.SERVING])
 builder.save(True)
 
