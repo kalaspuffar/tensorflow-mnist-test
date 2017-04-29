@@ -5,7 +5,7 @@
 mnist
 jni
 target
-model
+model*
 MNIST_data
 
 # Mobile Tools for Java (J2ME)
