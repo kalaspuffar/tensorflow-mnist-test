@@ -35,11 +35,11 @@ public class Keras
           Arrays.fill(keep_prob_arr, 1f);
 
           Tensor inputTensor = Tensor.create(new long[] {784}, fb);
-          Tensor keep_prob = Tensor.create(Boolean.FALSE);
+          Tensor no_learning = Tensor.create(Boolean.FALSE);
 
           Tensor result = s.runner()
             .feed("input_tensor", inputTensor)
-            .feed("dropout/keras_learning_phase", keep_prob)
+            .feed("dropout/keras_learning_phase", no_learning)
             .fetch("output_tensor")
             .run().get(0);
 
