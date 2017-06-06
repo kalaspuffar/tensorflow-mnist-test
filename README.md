@@ -92,26 +92,8 @@ Verifying with java we can build the project with ```mvn package``` and run it w
 
 ## (EXPERIMENTAL) Building tensorflow on Windows
 
-We need to build Bazel because it has a bug in windows that requires the latest build.
-
-```
-Set-ExecutionPolicy Unrestricted
-iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-choco install bazel
-```
-
-Start msys32
-```
-git clone https://github.com/google/protobuf.git
-cd protobuf
-git checkout v3.2.0
-pacman -S unzip autoconf perl automake libtool gcc make
-./autogen.sh
-./configure
-make
-make check
-sudo make install
-```
+Download and install bazel from the link below.
+https://bazel.build/versions/master/docs/windows.html
 
 ```
 git clone https://github.com/bazelbuild/bazel.git
@@ -144,7 +126,9 @@ export BAZEL_VS=[Visual Studio Path]
 export BAZEL_PYTHON=[python.exe Path]
 ```
 
-[Install uinst](http://www.nvidia.com/object/gpu-accelerated-applications-tensorflow-installation.html)
+[Install gpu supported tensorflow package](http://www.nvidia.com/object/gpu-accelerated-applications-tensorflow-installation.html)
+
+### Rolling your own.
 ```
 $ ./configure
 Please specify the location of python. [Default is /usr/bin/python]: [enter]
