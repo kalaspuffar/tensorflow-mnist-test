@@ -92,62 +92,79 @@ Verifying with java we can build the project with ```mvn package``` and run it w
 
 ## (EXPERIMENTAL) Building tensorflow on Windows
 
-Download and install bazel from the link below.
-https://bazel.build/versions/master/docs/windows.html
+Download visual studio
+https://www.visualstudio.com/downloads/
 
-```
-git clone https://github.com/bazelbuild/bazel.git
-```
+Download python and install with the "Add python to environment variables" option.
+https://www.python.org/
 
-Start msys32
+Download and install msys2.
+http://www.msys2.org/
+
+Download and install bazel distribution from the link below.
+https://github.com/bazelbuild/bazel/releases
+
+Download cuda and cudnn for GPU support.
+https://developer.nvidia.com/cuda-downloads
+https://developer.nvidia.com/cudnn
+
+Prepare bazel
+Start by editing  \src\main\native\build_windows_jni.sh and adding
+VSVARS="c:\tools\MVStudio2017\VC\Auxiliary\Build\vcvarsall.bat" or the path to
+your installation.
 ```
-export JAVA_HOME="$(ls -d C:/Program\ Files/Java/jdk* | sort | tail -n 1)"
-export PATH=[Python Path]:[Bazel Path]:[VC Path]:$PATH
-export BAZEL_SH=/usr/bin/bash.exe
-export BAZEL_VS=[Visual Studio Path]
-export BAZEL_PYTHON=[python.exe Path]
+cd [bazel-dist-dir]
 pacman -Syuu gcc git curl zip unzip zlib-devel
-cd [Cloned bazel directory]
-bazel build ///src:bazel
-compile.sh
+./compile.sh
 ```
 
 ```
 git clone https://github.com/tensorflow/tensorflow.git
-git checkout r1.1
+pacman -Syuu patch
 ```
 
 ```
 pip install numpy
-export PYTHON_BIN_PATH=[python_exe_path]
+export PYTHON_BIN_PATH=C:/Python36/python.exe
+export PYTHON_LIB_PATH=C:/Python36/lib/site-packages
 export BAZEL_WRKDIR=c:/tempdir/shrtpath
-export BAZEL_SH=c:/tools/msys64/usr/bin/bash.exe
+export BAZEL_SH=c:/msys32/usr/bin/bash.exe
 export BAZEL_VS=[Visual Studio Path]
-export BAZEL_PYTHON=[python.exe Path]
+export BAZEL_PYTHON=C:/Python36/python.exe
+export CUDA_PATH=C:/cuda
+export CUDA_PATH_V8_0=C:/cuda
+export CUDNN_INSTALL_PATH=c:/cuda
+export PATH=$PATH:/c/cuda/bin:/c/Python36:/c/github/bazel-0.4.5/output/
 ```
 
-[Install gpu supported tensorflow package](http://www.nvidia.com/object/gpu-accelerated-applications-tensorflow-installation.html)
-
-### Rolling your own.
 ```
 $ ./configure
-Please specify the location of python. [Default is /usr/bin/python]: [enter]
-Do you wish to build TensorFlow with Google Cloud Platform support? [y/N] n
-No Google Cloud Platform support will be enabled for TensorFlow
-Do you wish to build TensorFlow with GPU support? [y/N] y
-GPU support will be enabled for TensorFlow
-Please specify which gcc nvcc should use as the host compiler. [Default is /usr/bin/gcc]: [enter]
-Please specify the Cuda SDK version you want to use, e.g. 7.0. [Leave empty to use system default]: 8.0
-Please specify the location where CUDA 8.0 toolkit is installed. Refer to README.md for more details. [Default is /usr/local/cuda]: [enter]
-Please specify the Cudnn version you want to use. [Leave empty to use system default]: 5
-Please specify the location where cuDNN 5 library is installed. Refer to README.md for more details. [Default is /usr/local/cuda]: [enter]
-[Default is: "3.5,5.2"]: 5.2,6.1
-Setting up Cuda include
-Setting up Cuda lib64
-Setting up Cuda bin
-Setting up Cuda nvvm
-Setting up CUPTI include
-Setting up CUPTI lib64
+Found possible Python library paths:
+  C:\Python36\lib\site-packages
+  C:\Python36
+Please input the desired Python library path to use.  Default is [C:\Python36\lib\site-packages]
+
+Using python library path: C:\Python36\lib\site-packages
+Do you wish to build TensorFlow with MKL support? [y/N] N
+No MKL support will be enabled for TensorFlow
+Please specify optimization flags to use during compilation when bazel option "--config=opt" is specified [Default is -march=native]:
+Do you wish to build TensorFlow with the XLA just-in-time compiler (experimental)? [y/N] N
+No XLA support will be enabled for TensorFlow
+Do you wish to build TensorFlow with VERBS support? [y/N] N
+No VERBS support will be enabled for TensorFlow
+Do you wish to build TensorFlow with CUDA support? [y/N] y
+CUDA support will be enabled for TensorFlow
+Please specify the CUDA SDK version you want to use, e.g. 7.0. [Leave empty to default to CUDA 8.0]:
+Please specify the location where CUDA  toolkit is installed. Refer to README.md for more details. [Default is C:/cuda]:
+Please specify the cuDNN version you want to use. [Leave empty to default to cuDNN 6.0]:
+Please specify the location where cuDNN  library is installed. Refer to README.md for more details. [Default is C:/cuda]:
+Please specify a list of comma-separated Cuda compute capabilities you want to build with.
+You can find the compute capability of your device at: https://developer.nvidia.com/cuda-gpus.
+Please note that each additional compute capability significantly increases your build time and binary size.
+[Default is: "3.5,5.2"]: 6.1
+Do you wish to build TensorFlow with MPI support? [y/N] N
+MPI support will not be enabled for TensorFlow
+Configuration finished
 ```
 
 ```
@@ -167,6 +184,3 @@ bazel build --config opt //tensorflow/java:tensorflow //tensorflow/java:libtenso
 ```
 
 copy libtensorflow_jni.so to tensorflow_jni.dll in your jni directory.
-
-Windows 7 need Powershell 3.0
-http://www.microsoft.com/en-us/download/details.aspx?id=34595
