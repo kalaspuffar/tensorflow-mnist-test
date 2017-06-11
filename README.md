@@ -92,6 +92,9 @@ Verifying with java we can build the project with ```mvn package``` and run it w
 
 ## (EXPERIMENTAL) Building tensorflow on Windows
 
+Remove visual studio installations
+https://github.com/Microsoft/VisualStudioUninstaller
+
 Download visual studio
 https://www.visualstudio.com/downloads/
 
@@ -120,31 +123,23 @@ pacman -Syuu gcc git curl zip unzip zlib-devel
 
 ```
 git clone https://github.com/tensorflow/tensorflow.git
+cd [tensorflow]
 pacman -Syuu patch
-```
-
-```
-pip install numpy
-export PYTHON_BIN_PATH=C:/Python36/python.exe
-export PYTHON_LIB_PATH=C:/Python36/lib/site-packages
+pip install six numpy wheel protobuf
+export PYTHON_BIN_PATH=c:/Python36/python.exe
+export PYTHON_LIB_PATH=c:/Python36/lib/site-packages
 export BAZEL_WRKDIR=c:/tempdir/shrtpath
-export BAZEL_SH=c:/msys32/usr/bin/bash.exe
-export BAZEL_VS=[Visual Studio Path]
-export BAZEL_PYTHON=C:/Python36/python.exe
-export CUDA_PATH=C:/cuda
-export CUDA_PATH_V8_0=C:/cuda
+export BAZEL_SH=c:/tools/msys64/usr/bin/bash.exe
+export BAZEL_VS=c:/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio\ 14.0
+export BAZEL_PYTHON=c:/Python36/python.exe
+export CUDA_PATH=c:/cuda
+export CUDA_PATH_V8_0=c:/cuda
 export CUDNN_INSTALL_PATH=c:/cuda
-export PATH=$PATH:/c/cuda/bin:/c/Python36:/c/github/bazel-0.4.5/output/
+export PATH=$PATH:/c/cuda/bin:/c/Python36:/c/github/bazel-0.5.1/output/
 ```
 
 ```
 $ ./configure
-Found possible Python library paths:
-  C:\Python36\lib\site-packages
-  C:\Python36
-Please input the desired Python library path to use.  Default is [C:\Python36\lib\site-packages]
-
-Using python library path: C:\Python36\lib\site-packages
 Do you wish to build TensorFlow with MKL support? [y/N] N
 No MKL support will be enabled for TensorFlow
 Please specify optimization flags to use during compilation when bazel option "--config=opt" is specified [Default is -march=native]:
