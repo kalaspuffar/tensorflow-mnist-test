@@ -95,9 +95,15 @@ Verifying with java we can build the project with ```mvn package``` and run it w
 Remove visual studio installations
 https://github.com/Microsoft/VisualStudioUninstaller
 
-Download visual studio
+### Download one of the below build tools
+Download visual studio 2017
 https://www.visualstudio.com/downloads/
+MSBuild
+https://www.microsoft.com/en-us/download/details.aspx?id=48159
+Visual C++ Build Tools 2015
+http://landinghub.visualstudio.com/visual-cpp-build-tools
 
+### More required packages
 Download python and install with the "Add python to environment variables" option.
 https://www.python.org/
 
@@ -111,33 +117,40 @@ Download cuda and cudnn for GPU support.
 https://developer.nvidia.com/cuda-downloads
 https://developer.nvidia.com/cudnn
 
-Prepare bazel
+### Build bazel
 Start by editing  \src\main\native\build_windows_jni.sh and adding
 VSVARS="c:\tools\MVStudio2017\VC\Auxiliary\Build\vcvarsall.bat" or the path to
 your installation.
 ```
 cd [bazel-dist-dir]
 pacman -Syuu gcc git curl zip unzip zlib-devel
+export BAZEL_WRKDIR=c:/tempdir/shrtpath
+export BAZEL_SH=c:/tools/msys64/usr/bin/bash.exe
+export BAZEL_VS=c:/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio\ 14.0 Studio/2017/Community
+export BAZEL_PYTHON=c:/tools/Python27/python.exe
 ./compile.sh
+./compile.sh compile output/bazel.exe
 ```
 
+### Build tensorflow
 ```
 git clone https://github.com/tensorflow/tensorflow.git
 cd [tensorflow]
-pacman -Syuu patch
+pacman -Syuu patch protobuf
 pip install six numpy wheel protobuf
-export PYTHON_BIN_PATH=c:/Python36/python.exe
-export PYTHON_LIB_PATH=c:/Python36/lib/site-packages
+export PYTHON_BIN_PATH=c:/tools/Python27/python.exe
+export PYTHON_LIB_PATH=c:/tools/Python27/lib/site-packages
 export BAZEL_WRKDIR=c:/tempdir/shrtpath
 export BAZEL_SH=c:/tools/msys64/usr/bin/bash.exe
 export BAZEL_VS=c:/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio\ 14.0
-export BAZEL_PYTHON=c:/Python36/python.exe
+export BAZEL_PYTHON=c:/tools/Python27/python.exe
 export CUDA_PATH=c:/cuda
 export CUDA_PATH_V8_0=c:/cuda
 export CUDNN_INSTALL_PATH=c:/cuda
-export PATH=$PATH:/c/cuda/bin:/c/Python36:/c/github/bazel-0.5.1/output/
+export PATH=$PATH:/c/cuda/bin:/c/tools/Python27:/c/github/bazel-0.5.1-1/output/
 ```
 
+#### Configure
 ```
 $ ./configure
 Do you wish to build TensorFlow with MKL support? [y/N] N
@@ -162,8 +175,9 @@ MPI support will not be enabled for TensorFlow
 Configuration finished
 ```
 
+#### Building tensorflow pip package
 ```
-export BUILD_OPTS='--cpu=x64_windows_msvc --host_cpu=x64_windows_msvc --copt=/w --verbose_failures --experimental_ui'
+export BUILD_OPTS='--cpu=x64_windows_msvc --host_cpu=x64_windows_msvc --copt=/w --verbose_failures'
 bazel build -c opt $BUILD_OPTS tensorflow/tools/pip_package:build_pip_package
 ```
 
@@ -174,8 +188,13 @@ bazel-bin/tensorflow/tools/pip_package/build_pip_package c:/tmp/tensorflow_pkg
 pip install c:\tmp\tensorflow_pkg\tensorflow-1.1.0rc1-cp35-cp35m-win_amd64.whl
 ```
 
+#### Building tensorflow java dependencies.
 ```
-bazel build --config opt //tensorflow/java:tensorflow //tensorflow/java:libtensorflow_jni
+bazel build -c opt $BUILD_OPTS //tensorflow/java:tensorflow //tensorflow/java:libtensorflow_jni
 ```
 
+```
+cd bazel-bin\tensorflow\java\
+copy libtensorflow.jar to your build directory
 copy libtensorflow_jni.so to tensorflow_jni.dll in your jni directory.
+```
