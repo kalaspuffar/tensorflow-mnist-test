@@ -198,6 +198,7 @@ copy libtensorflow_jni.so to tensorflow_jni.dll in your jni directory.
 
 Download
 * [Visual C++ Build Tools 2015](http://landinghub.visualstudio.com/visual-cpp-build-tools)
+* [Swigwin](http://www.swig.org/download.html)
 * [Python 3.6>](https://www.python.org/)
 * [Cuda](https://developer.nvidia.com/cuda-downloads)
 * [Cudnn](https://developer.nvidia.com/cudnn)
