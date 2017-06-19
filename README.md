@@ -96,12 +96,9 @@ Remove visual studio installations
 https://github.com/Microsoft/VisualStudioUninstaller
 
 ### Download one of the below build tools
-Download visual studio 2017
-https://www.visualstudio.com/downloads/
-MSBuild
-https://www.microsoft.com/en-us/download/details.aspx?id=48159
-Visual C++ Build Tools 2015
-http://landinghub.visualstudio.com/visual-cpp-build-tools
+* [Download visual studio 2017](https://www.visualstudio.com/downloads/)
+* [MSBuild](https://www.microsoft.com/en-us/download/details.aspx?id=48159)
+* [Visual C++ Build Tools 2015](http://landinghub.visualstudio.com/visual-cpp-build-tools)
 
 ### More required packages
 Download python and install with the "Add python to environment variables" option.
@@ -118,15 +115,12 @@ https://developer.nvidia.com/cuda-downloads
 https://developer.nvidia.com/cudnn
 
 ### Build bazel
-Start by editing  \src\main\native\build_windows_jni.sh and adding
-VSVARS="c:\tools\MVStudio2017\VC\Auxiliary\Build\vcvarsall.bat" or the path to
-your installation.
 ```
 cd [bazel-dist-dir]
 pacman -Syuu gcc git curl zip unzip zlib-devel
 export BAZEL_WRKDIR=c:/tempdir/shrtpath
 export BAZEL_SH=c:/tools/msys64/usr/bin/bash.exe
-export BAZEL_VS=c:/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio\ 14.0 Studio/2017/Community
+export BAZEL_VS=c:/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio\ 14.0
 export BAZEL_PYTHON=c:/tools/Python27/python.exe
 ./compile.sh
 ./compile.sh compile output/bazel.exe
@@ -136,7 +130,7 @@ export BAZEL_PYTHON=c:/tools/Python27/python.exe
 ```
 git clone https://github.com/tensorflow/tensorflow.git
 cd [tensorflow]
-pacman -Syuu patch protobuf
+pacman -Syuu patch
 pip install six numpy wheel protobuf
 export PYTHON_BIN_PATH=c:/tools/Python27/python.exe
 export PYTHON_LIB_PATH=c:/tools/Python27/lib/site-packages
@@ -182,7 +176,7 @@ bazel build -c opt $BUILD_OPTS tensorflow/tools/pip_package:build_pip_package
 ```
 
 Copy all files from
-c:\tempdir\shrtpath\temp\_bazel_woden\incXe-uU\execroot\tensorflow\ to bazel-bin\tensorflow\tools\pip_package\build_pip_package.runfiles\
+cp --preserve=links -r bazel-tensorflow bazel-bin/tensorflow/tools/pip_package/build_pip_package.runfiles/
 ```
 bazel-bin/tensorflow/tools/pip_package/build_pip_package c:/tmp/tensorflow_pkg
 pip install c:\tmp\tensorflow_pkg\tensorflow-1.1.0rc1-cp35-cp35m-win_amd64.whl
@@ -197,4 +191,32 @@ bazel build -c opt $BUILD_OPTS //tensorflow/java:tensorflow //tensorflow/java:li
 cd bazel-bin\tensorflow\java\
 copy libtensorflow.jar to your build directory
 copy libtensorflow_jni.so to tensorflow_jni.dll in your jni directory.
+```
+
+
+## (EXPERIMENTAL) Building tensorflow on Windows (cmake)
+
+Download
+* [Visual C++ Build Tools 2015](http://landinghub.visualstudio.com/visual-cpp-build-tools)
+* [Python 3.6>](https://www.python.org/)
+* [Cuda](https://developer.nvidia.com/cuda-downloads)
+* [Cudnn](https://developer.nvidia.com/cudnn)
+
+Install python pip packages
+```
+pip install six numpy wheel protobuf
+```
+
+Configure build environment
+```
+git clone https://github.com/tensorflow/tensorflow.git
+cd tensorflow\tensorflow\contrib\cmake
+mkdir build
+cd build
+cmake .. -A x64 -DCMAKE_BUILD_TYPE=Release -DSWIG_EXECUTABLE=C:/tools/swigwin-3.0.12/swig.exe -DPYTHON_EXECUTABLE=c:/tools/Python36/python.exe -DPYTHON_LIBRARIES=c:/tools/Python36/libs/python3.lib -Dtensorflow_ENABLE_GPU=ON -DCUDNN_HOME="c:/cuda"
+```
+
+Build pip packages
+```
+MSBuild /p:Configuration=Release tf_python_build_pip_package.vcxproj
 ```
