@@ -39,7 +39,7 @@ public class App
 
           Tensor result = s.runner()
             .feed("input_tensor", inputTensor)
-            .feed("keep_prob", keep_prob)
+            .feed("dropout/keep_prob", keep_prob)
             .fetch("output_tensor")
             .run().get(0);
 
