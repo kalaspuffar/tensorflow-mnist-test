@@ -12,6 +12,8 @@ To run this example you need the following.
 * tensorflow_jni >=1.0.1
 * libtensorflow.jar >=1.0.1
 
+You also need to download and unpack the mnist training data. The gzip archives could be found at [THE MNIST DATABASE](http://yann.lecun.com/exdb/mnist/). Unpacking these and adding them to a folder called mnist so the scripts can find the files. In windows the unpacked files could get extensions that make them unrecognized. Removing these extensions so the ending filenames are in the format of ```mnist/t10k-labels.idx1-ubyte```
+
 ## Building tensorflow
 
 As of me writing this the current version of tensorflow is 1.0.0-PREVIEW1, this version is missing the feature SavedModelBundle which makes the setup much easier. By running only one save you get a dir with a full model. So you could modify this demo to use the preview but building tensorflow in Linux or Mac are not that hard.
