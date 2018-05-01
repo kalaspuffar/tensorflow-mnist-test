@@ -99,6 +99,7 @@ https://github.com/Microsoft/VisualStudioUninstaller
 * [Download visual studio 2017](https://www.visualstudio.com/downloads/)
 * [MSBuild](https://www.microsoft.com/en-us/download/details.aspx?id=48159)
 * [Visual C++ Build Tools 2015](http://landinghub.visualstudio.com/visual-cpp-build-tools)
+* [Visual C++ Build Tools 2017](https://www.visualstudio.com/downloads/#build-tools-for-visual-studio-2017)
 
 ### More required packages
 Download python and install with the "Add python to environment variables" option.
@@ -117,66 +118,90 @@ https://developer.nvidia.com/cudnn
 ### Build bazel
 ```
 cd [bazel-dist-dir]
-pacman -Syuu gcc git curl zip unzip zlib-devel
-export BAZEL_WRKDIR=c:/tempdir/shrtpath
-export BAZEL_SH=c:/tools/msys64/usr/bin/bash.exe
+pacman -Syuu --noconfirm
+pacman -Syuu gcc git curl zip unzip zlib-devel --noconfirm
 export BAZEL_VS=c:/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio\ 14.0
-export BAZEL_PYTHON=c:/tools/Python27/python.exe
+export BAZEL_PYTHON=c:/tools/python36/python.exe
+export BAZEL_SH=c:/tools/msys64/usr/bin/bash.exe
+export PATH=$PATH:/c/tools/python36
 ./compile.sh
-./compile.sh compile output/bazel.exe
 ```
+
+export BAZEL_VS=c:/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio\ 12.0
+export BAZEL_VS=c:/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio/2017/Community
+export BAZEL_VS=c:/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio/2017/BuildTools
 
 ### Build tensorflow
 ```
+export BAZEL_VS=c:/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio\ 14.0
+export BAZEL_PYTHON=c:/tools/python36/python.exe
+export BAZEL_SH=c:/tools/msys64/usr/bin/bash.exe
+export PATH=$PATH:/c/tools/python36
+```
+
+```
 git clone https://github.com/tensorflow/tensorflow.git
 cd [tensorflow]
-pacman -Syuu patch
+pacman -Syuu patch --noconfirm
 pip install six numpy wheel protobuf
-export PYTHON_BIN_PATH=c:/tools/Python27/python.exe
-export PYTHON_LIB_PATH=c:/tools/Python27/lib/site-packages
-export BAZEL_WRKDIR=c:/tempdir/shrtpath
-export BAZEL_SH=c:/tools/msys64/usr/bin/bash.exe
-export BAZEL_VS=c:/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio\ 14.0
-export BAZEL_PYTHON=c:/tools/Python27/python.exe
+export PYTHON_BIN_PATH=c:/tools/python36/python.exe
+export PYTHON_LIB_PATH=c:/tools/python36/lib/site-packages
+export PYTHON_INCLUDE_PATH=c:/tools/python36/include
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:c:/cuda/extras/CUPTI/libWin32
 export CUDA_PATH=c:/cuda
 export CUDA_PATH_V8_0=c:/cuda
 export CUDNN_INSTALL_PATH=c:/cuda
-export PATH=$PATH:/c/cuda/bin:/c/tools/Python27:/c/github/bazel-0.5.1-1/output/
+export PATH=$PATH:/c/cuda/bin:/c/github/bazel-0.12.0/output/
 ```
 
 #### Configure
 ```
 $ ./configure
-Do you wish to build TensorFlow with MKL support? [y/N] N
-No MKL support will be enabled for TensorFlow
-Please specify optimization flags to use during compilation when bazel option "--config=opt" is specified [Default is -march=native]:
-Do you wish to build TensorFlow with the XLA just-in-time compiler (experimental)? [y/N] N
-No XLA support will be enabled for TensorFlow
-Do you wish to build TensorFlow with VERBS support? [y/N] N
-No VERBS support will be enabled for TensorFlow
-Do you wish to build TensorFlow with CUDA support? [y/N] y
-CUDA support will be enabled for TensorFlow
-Please specify the CUDA SDK version you want to use, e.g. 7.0. [Leave empty to default to CUDA 8.0]:
-Please specify the location where CUDA  toolkit is installed. Refer to README.md for more details. [Default is C:/cuda]:
-Please specify the cuDNN version you want to use. [Leave empty to default to cuDNN 6.0]:
-Please specify the location where cuDNN  library is installed. Refer to README.md for more details. [Default is C:/cuda]:
+Extracting Bazel installation...
+You have bazel 0.8.0- (@non-git) installed.
+Do you wish to build TensorFlow with XLA JIT support? [y/N]:
+No XLA JIT support will be enabled for TensorFlow.
+Do you wish to build TensorFlow with GDR support? [y/N]:
+No GDR support will be enabled for TensorFlow.
+Do you wish to build TensorFlow with VERBS support? [y/N]:
+No VERBS support will be enabled for TensorFlow.
+Do you wish to build TensorFlow with CUDA support? [y/N]: y
+CUDA support will be enabled for TensorFlow.
+Please specify the CUDA SDK version you want to use, e.g. 7.0. [Leave empty to default to CUDA 8.0]: 9.0
+Please specify the location where CUDA 9.0 toolkit is installed. Refer to README.md for more details. [Default is c:/cuda]:
+Please specify the cuDNN version you want to use. [Leave empty to default to cuDNN 6.0]: 7.0.4
 Please specify a list of comma-separated Cuda compute capabilities you want to build with.
 You can find the compute capability of your device at: https://developer.nvidia.com/cuda-gpus.
-Please note that each additional compute capability significantly increases your build time and binary size.
-[Default is: "3.5,5.2"]: 6.1
-Do you wish to build TensorFlow with MPI support? [y/N] N
-MPI support will not be enabled for TensorFlow
+Please note that each additional compute capability significantly increases your build time and binary size. [Default is: 3.5,5.2]6.1
+Do you wish to build TensorFlow with MPI support? [y/N]:
+No MPI support will be enabled for TensorFlow.
+Please specify optimization flags to use during compilation when bazel option "--config=opt" is specified [Default is -march=native]:
+Add "--config=mkl" to your bazel command to build with MKL support.
+Please note that MKL on MacOS or windows is still not supported.
+If you would like to use a local MKL instead of downloading, please set the environment variable "TF_MKL_ROOT" every time before build.
 Configuration finished
 ```
 
 #### Building tensorflow pip package
 ```
-export BUILD_OPTS='--cpu=x64_windows_msvc --host_cpu=x64_windows_msvc --copt=/w --verbose_failures'
-bazel build -c opt $BUILD_OPTS tensorflow/tools/pip_package:build_pip_package
+
+bazel build -c opt --jobs 1 tensorflow/tools/pip_package:build_pip_package
+
+bazel build //tensorflow/tools/pip_package:build_pip_package 
+bazel build -c opt tensorflow/tools/pip_package:build_pip_package
+bazel build --config=monolithic //tensorflow/tools/pip_package:build_pip_package 
+
+bazel build --action_env=USE_MSVC_WRAPPER=1 //tensorflow/tools/pip_package:build_pip_package 
+
+
 ```
 
 Copy all files from
+```
 cp --preserve=links -r bazel-tensorflow bazel-bin/tensorflow/tools/pip_package/build_pip_package.runfiles/
+```
+
+Create PIP package
 ```
 bazel-bin/tensorflow/tools/pip_package/build_pip_package c:/tmp/tensorflow_pkg
 pip install c:\tmp\tensorflow_pkg\tensorflow-1.1.0rc1-cp35-cp35m-win_amd64.whl
@@ -185,6 +210,8 @@ pip install c:\tmp\tensorflow_pkg\tensorflow-1.1.0rc1-cp35-cp35m-win_amd64.whl
 #### Building tensorflow java dependencies.
 ```
 bazel build -c opt $BUILD_OPTS //tensorflow/java:tensorflow //tensorflow/java:libtensorflow_jni
+
+bazel build --config opt //tensorflow/java:tensorflow //tensorflow/java:libtensorflow_jni
 ```
 
 ```
@@ -208,16 +235,70 @@ Install python pip packages
 pip install six numpy wheel protobuf
 ```
 
-Configure build environment
+Prepare build directory
 ```
 git clone https://github.com/tensorflow/tensorflow.git
+git checkout v1.8.0
 cd tensorflow\tensorflow\contrib\cmake
 mkdir build
 cd build
-cmake .. -A x64 -DCMAKE_BUILD_TYPE=Release -DSWIG_EXECUTABLE=C:/tools/swigwin-3.0.12/swig.exe -DPYTHON_EXECUTABLE=c:/tools/Python36/python.exe -DPYTHON_LIBRARIES=c:/tools/Python36/libs/python3.lib -Dtensorflow_ENABLE_GPU=ON -DCUDNN_HOME="c:/cuda"
+```
+
+Configure for Python 2.7
+```
+cmake .. -DCMAKE_BUILD_TYPE=Release -DSWIG_EXECUTABLE=C:/tools/swigwin-3.0.12/swig.exe -DPYTHON_EXECUTABLE=c:/tools/Python27/python.exe -DPYTHON_LIBRARIES=c:/tools/Python27/libs/python27.lib -Dtensorflow_ENABLE_GPU=ON -DCUDNN_HOME="c:/cuda"
+```
+
+Configure for Python 3.6
+```
+cmake .. -A x64 -DCMAKE_BUILD_TYPE=Release -DSWIG_EXECUTABLE=C:/tools/swigwin-3.0.12/swig.exe -DPYTHON_EXECUTABLE=c:/tools/Python36/python.exe -DPYTHON_LIBRARIES=c:/tools/Python36/libs/python36.lib -Dtensorflow_ENABLE_GPU=ON -DCUDNN_HOME=c:/cuda -Dtensorflow_VERBOSE=ON
+```
+
+Build example trainer
+```
+MSBuild /maxcpucount:2 /p:Configuration=Release tf_tutorials_example_trainer.vcxproj
 ```
 
 Build pip packages
 ```
-MSBuild /p:Configuration=Release tf_python_build_pip_package.vcxproj
+MSBuild /maxcpucount:2 /p:Configuration=Release tf_python_build_pip_package.vcxproj
+```
+
+
+### Extra params not used
+```
+export BAZEL_WRKDIR=c:/tempdir/shrtpath
+export BAZEL_SH=c:/tools/msys64/usr/bin/bash.exe
+export BAZEL_VS=c:/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio\ 14.0
+export BAZEL_PYTHON=c:/tools/Python27/python.exe
+export EXTRA_BAZEL_ARGS='--crosstool_top=@standalone_local_config_cc//:toolchain'
+export EXTRA_BAZEL_ARGS='--copt=-Ic:/tools/msys64/usr/include --copt=-Lc:/tools/msys64/usr/lib --verbose_failures'
+export EXTRA_BAZEL_ARGS='--jobs 1'
+export CFLAGS="-Ic:/tools/msys64/usr/include"
+export CXXFLAGS="-Ic:/tools/msys64/usr/include"
+export LDFLAGS="-Lc:/tools/msys64/usr/lib"
+export EXTRA_BAZEL_ARGS='--jobs 1 --cpu=x64_windows_msvc --host_cpu=x64_windows_msvc --verbose_failures'
+export BAZEL_VS=c:/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio\ 14.0
+export EXTRA_BAZEL_ARGS='--cpu=x64_windows_msvc --host_cpu=x64_windows_msvc --copt=-w --host_copt=-w --python_path=c:/tools/Python27/python.exe --verbose_failures'
+export BAZEL_WRKDIR=c:/tempdir/shrtpath
+export BAZEL_SH=c:/tools/msys64/usr/bin/bash.exe
+export BAZEL_VS=c:/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio\ 14.0
+export BAZEL_PYTHON=c:/tools/Python36/python.exe
+export PATH=$PATH:/c/cuda/bin:/c/tools/Python36:/c/github/bazel-0.5.4/output/
+
+export BUILD_OPTS='--cpu=x64_windows_msvc --host_cpu=x64_windows_msvc --python_path=c:/tools/python27/python.exe --verbose_failures'
+
+export BUILD_OPTS='--cpu=x64_windows_msvc --host_cpu=x64_windows_msvc --copt=-w --host_copt=-w --python_path=c:/tools/python36/python.exe --verbose_failures'
+
+export BUILD_OPTS='--cpu=x64_windows_msvc --host_cpu=x64_windows_msvc --verbose_failures'
+
+bazel build --config=opt --config=cuda --cpu=x64_windows_msvc --copt=-w --host_copt=-w --host_cpu=x64_windows_msvc --verbose_failures //tensorflow/tools/pip_package:build_pip_package 
+
+bazel build -c opt $BUILD_OPTS tensorflow/tools/pip_package:build_pip_package
+
+bazel build --config=opt --config=cuda //tensorflow/tools/pip_package:build_pip_package 
+./compile.sh compile output/bazel.exe
+export BAZEL_VS=c:/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio/2017/BuildTools
+export EXTRA_BAZEL_ARGS='--cpu=x64_windows_msvc --host_cpu=x64_windows_msvc --copt=-w --host_copt=-w --python_path=c:/tools/python36/python.exe --verbose_failures'
+
 ```
