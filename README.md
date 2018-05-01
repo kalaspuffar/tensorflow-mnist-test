@@ -223,7 +223,7 @@ copy libtensorflow_jni.so to tensorflow_jni.dll in your jni directory.
 ```
 
 
-## (EXPERIMENTAL) Building tensorflow on Windows (cmake)
+## Building tensorflow on Windows (cmake)
 
 Download
 * [Visual C++ Build Tools 2015](http://landinghub.visualstudio.com/visual-cpp-build-tools)
@@ -240,15 +240,11 @@ pip install six numpy wheel protobuf
 Prepare build directory
 ```
 git clone https://github.com/tensorflow/tensorflow.git
+cd tensorflow
 git checkout v1.8.0
 cd tensorflow\tensorflow\contrib\cmake
 mkdir build
 cd build
-```
-
-Configure for Python 2.7
-```
-cmake .. -DCMAKE_BUILD_TYPE=Release -DSWIG_EXECUTABLE=C:/tools/swigwin-3.0.12/swig.exe -DPYTHON_EXECUTABLE=c:/tools/Python27/python.exe -DPYTHON_LIBRARIES=c:/tools/Python27/libs/python27.lib -Dtensorflow_ENABLE_GPU=ON -DCUDNN_HOME="c:/cuda"
 ```
 
 Configure for Python 3.6
@@ -302,5 +298,4 @@ bazel build --config=opt --config=cuda //tensorflow/tools/pip_package:build_pip_
 ./compile.sh compile output/bazel.exe
 export BAZEL_VS=c:/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio/2017/BuildTools
 export EXTRA_BAZEL_ARGS='--cpu=x64_windows_msvc --host_cpu=x64_windows_msvc --copt=-w --host_copt=-w --python_path=c:/tools/python36/python.exe --verbose_failures'
-
 ```
